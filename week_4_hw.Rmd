@@ -1,0 +1,27 @@
+```{r}
+library(sf)
+library(tidyverse)
+library(tmap)
+library(tmaptools)
+library(RSQLite)
+library(dplyr)
+library(here)
+library(janitor)
+dii<-read.csv(here( "HDR23-24_Composite_indices_complete_time_series.csv"),
+              na="n/a", 
+              encoding = "latin1")# 必须包含文件扩展名
+dii_1019<- dii%>%
+          dplyr::select(., country, 
+                        gii_2010:gii_2019)
+spatial_data_world<-
+  st_read("World_Countries_(Generalized)_9029012925078512962.geojson")
+spatial_data_world<-spatial_data_world%>%
+                    clean_names()
+merged_data<-merge(
+     spatial_data_world,
+      dii_1019,
+      by="country"
+)
+plot(merged_data,max.plot=15)
+
+```
